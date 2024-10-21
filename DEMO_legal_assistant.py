@@ -48,7 +48,7 @@ for key, value in encrypted_secrets.items():
 OPENAI_API_KEY= decrypted_secrets['OPENAI_API_KEY'] 
 VECTOR_STORE_ID= decrypted_secrets['VECTOR_STORE_ID']
 ASSISTANT_ID= decrypted_secrets['ASSISTANT_ID']
-SERVICE_ACCOUNT= os.getenv('BASE64_SERVICE_KEY')
+SERVICE_ACCOUNT= decrypted_secrets['SERVICE_ACCOUNT']
 
 
 if not SERVICE_ACCOUNT:
@@ -75,11 +75,11 @@ if not firebase_admin._apps:
 db= firestore.client()
 
 
-openai.api_key = os.getenv('OPENAI_API_KEY_raw')
+openai.api_key = OPENAI_API_KEY
 client = openai.OpenAI(api_key=openai.api_key)
 model = "gpt-4o"
-assis_id = os.getenv('ASSISTANT_ID_LAW')
-vector_id = os.getenv('VECTOR_STORE_ID_LAW')
+assis_id = ASSISTANT_ID
+vector_id = VECTOR_STORE_ID
 
 
 # # Vector Database Creation

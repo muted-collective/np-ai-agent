@@ -75,11 +75,11 @@ if not firebase_admin._apps:
 db= firestore.client()
 
 
-openai.api_key = os.getenv('OPENAI_API_KEY_raw')
+openai.api_key = OPENAI_API_KEY
 client = openai.OpenAI(api_key=openai.api_key)
 model = "gpt-4o"
-assis_id = os.getenv('ASSISTANT_ID_FIN')
-vector_id = os.getenv('VECTOR_STORE_ID_FIN')
+assis_id = ASSISTANT_ID
+vector_id = VECTOR_STORE_ID
 
 
 
