@@ -20,7 +20,7 @@ load_dotenv()
 
 # Hidden Keys
 
-encryption_key = st.secrets['ENCRYPTION_KEY']
+encryption_key = st.secrets['ENCRYPTION_KEY_FIN']
 cipher_suite = Fernet(encryption_key.encode())
 
 
