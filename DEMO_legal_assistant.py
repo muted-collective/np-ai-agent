@@ -1,7 +1,7 @@
 import openai
 import streamlit as st
 from dotenv import load_dotenv
-import time
+import time, datetime
 import re
 import json
 from os.path import basename
@@ -74,26 +74,26 @@ if not firebase_admin._apps:
 
 db= firestore.client()
 
+OPENAI_KEY = os.getenv("OPENAI_API_KEY_raw")
 
-openai.api_key = OPENAI_API_KEY
+openai.api_key = OPENAI_KEY
 client = openai.OpenAI(api_key=openai.api_key)
 model = "gpt-4o"
 assis_id = ASSISTANT_ID
 vector_id = VECTOR_STORE_ID
 
+# # # Vector Database Creation
 
-# # Vector Database Creation
+# # vector_finance= client.beta.vector_stores.create()
 
-# vector_finance= client.beta.vector_stores.create()
+# # print(vector_finance.id)
 
-# print(vector_finance.id)
-
-# while True:
-#     time.sleep(1)
-
+# # while True:
+# #     time.sleep(1)
 
 
-# # Update assistant
+
+# Update assistant
 
 # instructions= """
     
@@ -255,6 +255,45 @@ def create_new_thread():
     # Initialize the conversation history for the new thread
     save_thread(thread_id_new, [], thread_name="Untitled")
     return thread_id_new
+
+
+def rename_untitled_threads():
+
+    # Query for docs named exactly "Untitled"
+    untitled_docs = list(
+        db.collection("threads_law").where("name", "==", "Untitled").stream()
+    )
+    
+    if not untitled_docs:
+        print("No untitled threads found.")
+        return
+    
+    # Keep a dictionary of counters keyed by date:
+
+    counters = {}
+    
+    for doc_snapshot in untitled_docs:
+        doc_id = doc_snapshot.id
+        
+        # Creation timestamp:
+
+        today_str = datetime.date.today().strftime("%Y-%m-%d")
+        
+        # Check if we already have a counter for today_str
+        if today_str not in counters:
+            counters[today_str] = 0
+        
+        # Increment the date-specific counter
+        counters[today_str] += 1
+        new_number = counters[today_str]
+
+        # Build a new name
+        new_name = f"Untitled_{today_str}_#{new_number}"
+        
+        # Update Firestore
+        db.collection("threads_law").document(doc_id).update({"name": new_name})
+
+
 
 
 # Functions
@@ -666,4 +705,38 @@ if st.session_state.start_chat and st.session_state.thread_id is not None:
             save_thread(st.session_state.thread_id, st.session_state.messages, get_thread_name(st.session_state.thread_id))
 else:
     st.write("Please start a chat to begin.")
+
+
+# New vector database
+
+# vector= client.beta.vector_stores.create(
+#     name="LegalAI",
+#     chunking_strategy= {
+#         "type": "static",
+#         "static": {
+#             "max_chunk_size_tokens": 4000,
+#             "chunk_overlap_tokens": 400}}
+# )
+
+# latest_vector_id= vector.id
+
+# print(latest_vector_id)
+
+
+# # Update AI assistant
+
+# legal_ass= client.beta.assistants.update(
+#     model= model,
+#     assistant_id=assis_id,
+#     name= "Legal_Assistant",
+#     temperature= 0.3,
+#     tools= list_tools,
+#     tool_resources={
+#         "file_search":{
+#             "vector_store_ids": [vector_id],    
+#           }
+#         }
+# )
+
+# print(legal_ass.id)
 
