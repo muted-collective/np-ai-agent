@@ -76,7 +76,7 @@ db= firestore.client()
 
 OPENAI_KEY = os.getenv("OPENAI_API_KEY_raw")
 
-openai.api_key = OPENAI_KEY
+openai.api_key = OPENAI_API_KEY
 client = openai.OpenAI(api_key=openai.api_key)
 model = "gpt-4o"
 assis_id = ASSISTANT_ID
