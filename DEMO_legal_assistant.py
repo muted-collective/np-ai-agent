@@ -254,6 +254,7 @@ def create_new_thread():
 
     # Initialize the conversation history for the new thread
     save_thread(thread_id_new, [], thread_name="Untitled")
+    rename_untitled_threads()
     return thread_id_new
 
 
@@ -292,8 +293,6 @@ def rename_untitled_threads():
         
         # Update Firestore
         db.collection("threads_law").document(doc_id).update({"name": new_name})
-
-
 
 
 # Functions
@@ -709,14 +708,14 @@ else:
 
 # New vector database
 
-# vector= client.beta.vector_stores.create(
-#     name="LegalAI",
-#     chunking_strategy= {
-#         "type": "static",
-#         "static": {
-#             "max_chunk_size_tokens": 4000,
-#             "chunk_overlap_tokens": 400}}
-# )
+vector= client.beta.vector_stores.create(
+    name="LegalAI",
+    chunking_strategy= {
+        "type": "static",
+        "static": {
+            "max_chunk_size_tokens": 4000,
+            "chunk_overlap_tokens": 100}}
+)
 
 # latest_vector_id= vector.id
 
